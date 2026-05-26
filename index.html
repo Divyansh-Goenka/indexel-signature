@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indexel Email Signature Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue: #285498; --teal: #0299CA; --dark: #0D274A;
+    --bg: #f0f5fb; --border: #dde4ef; --text: #1a2740; --muted: #6b7a99;
+    --radius: 10px; --shadow: 0 2px 16px rgba(40,84,152,0.10);
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--dark); padding: 16px 40px;
+    display: flex; align-items: center; gap: 18px;
+    border-bottom: 3px solid var(--teal);
+  }
+  header svg { height: 28px; width: auto; }
+  header strong { display: block; font-size: 15px; color: #fff; font-weight: 600; }
+  header span { font-size: 12px; color: #a8bcd8; }
+
+  .main {
+    display: grid; grid-template-columns: 340px 1fr;
+    min-height: calc(100vh - 67px);
+  }
+
+  .form-panel {
+    background: #fff; border-right: 1px solid var(--border);
+    padding: 28px 24px; overflow-y: auto;
+  }
+  .section-title {
+    font-size: 10px; font-weight: 600; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--blue);
+    margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+  .field { margin-bottom: 14px; }
+  label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 5px; }
+  input {
+    width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
+    border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--text); background: #f7f9fc; outline: none; transition: border-color 0.2s;
+  }
+  input:focus { border-color: var(--blue); background: #fff; }
+  input::placeholder { color: #b0bac8; }
+
+  .copy-btn {
+    width: 100%; padding: 13px; background: var(--blue); color: #fff;
+    border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .copy-btn:hover { background: var(--dark); }
+  .copy-btn:active { transform: scale(0.98); }
+  .copy-btn.success { background: #0d9e6e; }
+
+  .instructions {
+    margin-top: 16px; background: #f0f5fb; border-radius: 8px;
+    padding: 14px 16px; font-size: 12px; color: var(--muted); line-height: 1.6;
+  }
+  .instructions strong { color: var(--dark); display: block; margin-bottom: 6px; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .instructions ol { padding-left: 16px; }
+  .instructions li { margin-bottom: 3px; }
+  .instructions code {
+    font-family: 'DM Mono', monospace; background: #e2eaf7;
+    padding: 1px 5px; border-radius: 3px; font-size: 10px; color: var(--blue);
+  }
+
+  .preview-panel { padding: 36px 40px; background: var(--bg); overflow-y: auto; }
+  .preview-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .preview-label::after { content: ''; height: 1px; background: var(--border); flex: 1; max-width: 200px; }
+
+  .email-chrome {
+    max-width: 600px; background: #fff; border-radius: var(--radius);
+    box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border);
+  }
+  .email-chrome-bar {
+    background: #f4f5f7; border-bottom: 1px solid var(--border);
+    padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .email-fields { padding: 12px 20px; border-bottom: 1px solid var(--border); }
+  .email-field { display: flex; gap: 8px; font-size: 12px; color: #888; padding: 3px 0; }
+  .email-field span:first-child { color: #aaa; width: 32px; flex-shrink: 0; }
+  .email-body { padding: 20px 24px 24px; }
+  .email-body-text {
+    font-family: Arial, sans-serif; font-size: 13px;
+    color: #222; line-height: 1.6; margin-bottom: 20px;
+    padding-bottom: 16px; border-bottom: 1px solid #eee;
+  }
+
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; }
+    header { padding: 14px 20px; }
+    .preview-panel { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+    <text x="0" y="40" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="42" fill="white" letter-spacing="-1">indexel</text>
+  </svg>
+  <div>
+    <strong>Email Signature Generator</strong>
+    <span>Indexel Engineering Limited</span>
+  </div>
+</header>
+
+<div class="main">
+
+  <div class="form-panel">
+    <div class="section-title">Your Details</div>
+
+    <div class="field">
+      <label>Full Name</label>
+      <input id="f-name" type="text" placeholder="e.g. Amit Singhal" oninput="render()" />
+    </div>
+    <div class="field">
+      <label>Designation</label>
+      <input id="f-title" type="text" placeholder="e.g. Director" oninput="render()" />
+    </div>
+    <div class="field">
+      <label>Email Address</label>
+      <input id="f-email" type="email" placeholder="name@indexel.co.in" oninput="render()" />
+    </div>
+    <div class="field">
+      <label>Mobile Number</label>
+      <input id="f-mobile" type="text" placeholder="+91-XXXXX XXXXX" oninput="render()" />
+    </div>
+
+    <button class="copy-btn" id="copy-btn" onclick="copySignature()">📋 Copy Signature to Clipboard</button>
+
+    <div class="instructions">
+      <strong>How to add in Outlook</strong>
+      <ol>
+        <li>Click <code>Copy Signature</code> above</li>
+        <li>Open Outlook → <code>File</code> → <code>Options</code></li>
+        <li>Go to <code>Mail</code> → <code>Signatures</code></li>
+        <li>Click <code>New</code>, give it a name</li>
+        <li>Paste with <code>Ctrl + V</code></li>
+        <li>Click <code>OK</code> to save</li>
+      </ol>
+    </div>
+
+    <div class="instructions" style="margin-top:10px;">
+      <strong>How to add in Gmail</strong>
+      <ol>
+        <li>Click <code>Copy Signature</code> above</li>
+        <li>Open Gmail → <code>Settings ⚙️</code> → <code>See all settings</code></li>
+        <li>Scroll to <code>Signature</code> → <code>Create new</code></li>
+        <li>Paste with <code>Ctrl + V</code></li>
+        <li>Scroll down and click <code>Save Changes</code></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div class="email-chrome">
+      <div class="email-chrome-bar">
+        <div class="dot" style="background:#ff5f57"></div>
+        <div class="dot" style="background:#ffbd2e"></div>
+        <div class="dot" style="background:#28c840"></div>
+        <span style="font-size:12px;color:#888;margin-left:8px;font-family:sans-serif;">New Message — Outlook</span>
+      </div>
+      <div class="email-fields">
+        <div class="email-field"><span>To:</span><span>client@example.com</span></div>
+        <div class="email-field"><span>Sub:</span><span>Project Update — Q2 2025</span></div>
+      </div>
+      <div class="email-body">
+        <div class="email-body-text">
+          Dear Team,<br><br>
+          Please find the attached documents for your review.<br>
+          Looking forward to your feedback.
+        </div>
+        <div id="sig-container"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function val(id) { return document.getElementById(id).value.trim(); }
+
+const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="72" height="21" viewBox="0 0 200 55"><text x="0" y="44" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="46" fill="#285498" letter-spacing="-1">indexel</text></svg>`;
+const LOGO_DATA = 'data:image/svg+xml;base64,' + btoa(LOGO_SVG);
+
+function buildSig() {
+  const name   = val('f-name')   || 'Your Name';
+  const title  = val('f-title')  || 'Designation';
+  const email  = val('f-email')  || 'email@indexel.co.in';
+  const mobile = val('f-mobile') || '+91-XXXXX XXXXX';
+
+  return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;width:380px;">
+  <tr><td style="padding:0 0 14px 0;font-size:13px;color:#222222;line-height:1;">Best Regards,</td></tr>
+  <tr><td style="padding:0 0 2px 0;font-size:16px;font-weight:bold;color:#0D274A;line-height:1;">${name}</td></tr>
+  <tr><td style="padding:0 0 10px 0;font-size:12px;color:#374151;line-height:22px;vertical-align:middle;">
+    ${title}&nbsp;&nbsp;|&nbsp;&nbsp;<img src="${LOGO_DATA}" alt="indexel" width="60" height="18" style="vertical-align:middle;display:inline;border:0;" />
+  </td></tr>
+  <tr><td style="padding:0 0 10px 0;"><table cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#285498;height:1px;width:260px;font-size:0;line-height:0;">&nbsp;</td></tr></table></td></tr>
+  <tr><td style="padding:0 0 2px 0;font-size:12px;font-weight:bold;color:#285498;line-height:1;">Indexel Engineering Limited</td></tr>
+  <tr><td style="padding:0 0 1px 0;font-size:12px;color:#374151;line-height:1.5;">G1-12, IT Park, Road No. 4, IPIA,</td></tr>
+  <tr><td style="padding:0 0 6px 0;font-size:12px;color:#374151;line-height:1.5;">Kota, Rajasthan &ndash; India 324005</td></tr>
+  <tr><td style="padding:0 0 1px 0;font-size:12px;color:#374151;line-height:1.5;">Mobile: ${mobile}</td></tr>
+  <tr><td style="padding:0 0 1px 0;font-size:12px;color:#374151;line-height:1.5;">E-Mail: <a href="mailto:${email}" style="color:#374151;text-decoration:none;">${email}</a></td></tr>
+  <tr><td style="padding:0;font-size:12px;color:#374151;line-height:1.5;">Website: <a href="https://www.indexel.co.in" style="color:#374151;text-decoration:none;">www.indexel.co.in</a></td></tr>
+</table>`;
+}
+
+function render() {
+  document.getElementById('sig-container').innerHTML = buildSig();
+}
+
+function copySignature() {
+  const html = buildSig();
+  const blob = new Blob([html], { type: 'text/html' });
+  navigator.clipboard.write([new ClipboardItem({ 'text/html': blob })])
+    .then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.textContent = '✅ Copied! Now paste into Outlook or Gmail';
+      btn.classList.add('success');
+      setTimeout(() => { btn.textContent = '📋 Copy Signature to Clipboard'; btn.classList.remove('success'); }, 3500);
+    })
+    .catch(() => {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      document.body.appendChild(tmp);
+      const range = document.createRange();
+      range.selectNodeContents(tmp);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand('copy');
+      document.body.removeChild(tmp);
+      alert('Copied! Paste into Outlook or Gmail.');
+    });
+}
+
+render();
+</script>
+</body>
+</html>
