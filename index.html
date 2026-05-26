@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Indexel Email Signature Generator</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -15,17 +16,20 @@
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
   header {
-    background: var(--dark); padding: 16px 40px;
-    display: flex; align-items: center; gap: 18px;
-    border-bottom: 3px solid var(--teal);
+    background: #ffffff;
+    padding: 14px 40px;
+    display: flex; align-items: center; gap: 16px;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 8px rgba(40,84,152,0.07);
   }
-  .header-logo { height: 26px; width: auto; filter: brightness(0) invert(1); }
-  header strong { display: block; font-size: 15px; color: #fff; font-weight: 600; }
-  header span { font-size: 12px; color: #a8bcd8; }
+  .header-logo { height: 24px; width: auto; }
+  header strong { display: block; font-size: 14px; color: var(--dark); font-weight: 600; }
+  header span { font-size: 12px; color: var(--muted); }
+  .header-divider { width: 1px; height: 32px; background: var(--border); margin: 0 4px; }
 
   .main {
-    display: grid; grid-template-columns: 340px 1fr;
-    min-height: calc(100vh - 67px);
+    display: grid; grid-template-columns: 350px 1fr;
+    min-height: calc(100vh - 61px);
   }
 
   .form-panel {
@@ -39,6 +43,28 @@
   }
   .field { margin-bottom: 14px; }
   label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 5px; }
+
+  .phone-row {
+    display: flex; align-items: center; gap: 0;
+    border: 1.5px solid var(--border); border-radius: 6px;
+    background: #f7f9fc; overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .phone-row:focus-within { border-color: var(--blue); background: #fff; }
+  .phone-prefix {
+    padding: 9px 10px 9px 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--muted); background: transparent;
+    border-right: 1px solid var(--border);
+    white-space: nowrap; user-select: none;
+  }
+  .phone-row input {
+    border: none !important; background: transparent !important;
+    padding: 9px 12px; flex: 1; outline: none;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text);
+  }
+  .phone-row input::placeholder { color: #b0bac8; }
+
   input {
     width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
     border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px;
@@ -47,18 +73,24 @@
   input:focus { border-color: var(--blue); background: #fff; }
   input::placeholder { color: #b0bac8; }
 
-  .copy-btn {
-    width: 100%; padding: 13px; background: var(--blue); color: #fff;
-    border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif;
-    font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px;
-    transition: background 0.2s, transform 0.1s;
+  .btn-row { display: flex; gap: 10px; margin-top: 8px; }
+  .copy-btn, .dl-btn {
+    flex: 1; padding: 12px 8px;
+    border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: background 0.2s, transform 0.1s;
   }
+  .copy-btn { background: var(--blue); color: #fff; }
   .copy-btn:hover { background: var(--dark); }
   .copy-btn:active { transform: scale(0.98); }
   .copy-btn.success { background: #0d9e6e; }
+  .dl-btn { background: var(--bg); color: var(--blue); border: 1.5px solid var(--border); }
+  .dl-btn:hover { background: #e2eaf7; }
+  .dl-btn:active { transform: scale(0.98); }
+  .dl-btn.loading { opacity: 0.7; cursor: wait; }
 
   .instructions {
-    margin-top: 16px; background: #f0f5fb; border-radius: 8px;
+    margin-top: 16px; background: var(--bg); border-radius: 8px;
     padding: 14px 16px; font-size: 12px; color: var(--muted); line-height: 1.6;
   }
   .instructions strong { color: var(--dark); display: block; margin-bottom: 6px; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; }
@@ -78,7 +110,7 @@
   .preview-label::after { content: ''; height: 1px; background: var(--border); flex: 1; max-width: 200px; }
 
   .email-chrome {
-    max-width: 600px; background: #fff; border-radius: var(--radius);
+    max-width: 620px; background: #fff; border-radius: var(--radius);
     box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border);
   }
   .email-chrome-bar {
@@ -89,7 +121,7 @@
   .email-fields { padding: 12px 20px; border-bottom: 1px solid var(--border); }
   .email-field { display: flex; gap: 8px; font-size: 12px; color: #888; padding: 3px 0; }
   .email-field span:first-child { color: #aaa; width: 32px; flex-shrink: 0; }
-  .email-body { padding: 20px 24px 24px; }
+  .email-body { padding: 20px 24px 28px; }
   .email-body-text {
     font-family: Arial, sans-serif; font-size: 13px;
     color: #222; line-height: 1.6; margin-bottom: 20px;
@@ -98,7 +130,7 @@
 
   @media (max-width: 768px) {
     .main { grid-template-columns: 1fr; }
-    header { padding: 14px 20px; }
+    header { padding: 12px 20px; }
     .preview-panel { padding: 24px 20px; }
   }
 </style>
@@ -107,6 +139,7 @@
 
 <header>
   <img class="header-logo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI1IiBoZWlnaHQ9Ijk1IiB2aWV3Qm94PSIwIDAgMzI1IDk1IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMzIuNjE2NyA4NS4xODQ5SDIwLjI4NzZWMzUuMjY0SDMyLjYxNjdWODUuMTg0OVoiIGZpbGw9IiMyODU0OTgiLz4KPHBhdGggZD0iTTUxLjYxNTggODUuMTg1NkgzOS4yODcxVjM1LjI2NDZINTAuNzA2M0w1MS43MTY4IDQxLjczMjFDNTMuMjU3OSAzOS4yMzEgNTUuNDgxMSAzNy4yODU3IDU4LjMzNTkgMzUuODcwOUM2MS4xOTA3IDM0LjQ1NjIgNjQuMzIzNCAzMy43NDg4IDY3LjY4MzUgMzMuNzQ4OEM3My45NDg5IDMzLjc0ODggNzguNjczMiAzNS41OTMgODEuODgxNyAzOS4zMDY4Qzg1LjA5MDEgNDMuMDIwNSA4Ni42ODE3IDQ4LjA3MzMgODYuNjgxNyA1NC40NjVWODUuMTg1Nkg3NC4zNTMxVjU3LjM5NTZDNzQuMzUzMSA1My4yMjcxIDczLjQxODMgNTAuMDk0NCA3MS41MjM1IDQ4LjA0OEM2OS42Mjg4IDQ2LjAwMTcgNjcuMDc3MSA0NC45NjU4IDYzLjg0MzQgNDQuOTY1OEM2MC4wMDMzIDQ0Ljk2NTggNTYuOTk2OSA0Ni4xNzg1IDU0Ljg0OTUgNDguNjAzOEM1Mi43MDIxIDUxLjAyOTEgNTEuNjE1OCA1NC4yNjI5IDUxLjYxNTggNTguMzA1MVY4NS4xODU2WiIgZmlsbD0iIzI4NTQ5OCIvPgo8cGF0aCBkPSJNMTEzLjI1OCA4Ni40OTg0QzEwOC40MDggODYuNDk4NCAxMDQuMjM5IDg1LjQxMjEgMTAwLjc3OCA4My4yMTQxQzk3LjMxNjggODEuMDE2MiA5NC42MTM2IDc3Ljk4NDUgOTIuNjkzNSA3NC4wNjg3QzkwLjc3MzUgNzAuMTUyOCA4OS44MTM1IDY1LjYwNTMgODkuODEzNSA2MC40MjYzQzg5LjgxMzUgNTUuMjQ3MiA5MC43NzM1IDUwLjY0OTIgOTIuNjkzNSA0Ni42MzIzQzk0LjYxMzYgNDIuNjE1NCA5Ny4zOTI2IDM5LjQ4MjcgMTAxLjAzMSAzNy4xODM3QzEwNC42NjkgMzQuODg0NyAxMDguOTg5IDMzLjc0NzggMTEzLjk2NiAzMy43NDc4QzExNy40NzcgMzMuNzQ3OCAxMjAuNjYgMzQuNDMgMTIzLjU2NiAzNS44MTk1QzEyNi40NzEgMzcuMjA5IDEyOC42OTQgMzkuMTI5IDEzMC4yMzUgNDEuNjMwMVYxMEgxNDIuNDYzVjg1LjE4NDdIMTMxLjE0NUwxMzAuMzM2IDc3LjQwMzVDMTI4Ljg0NiA4MC4yMzMgMTI2LjU3MiA4Mi40NTYyIDEyMy41MTUgODQuMDczMUMxMjAuNDU4IDg1LjY5IDExNy4wMjIgODYuNDk4NCAxMTMuMjU4IDg2LjQ5ODRaTTExNS45ODcgNzUuMTgwM0MxMTguODkyIDc1LjE4MDMgMTIxLjM2OCA3NC41NDg3IDEyMy40NjUgNzMuMzEwOEMxMjUuNTYyIDcyLjA3MjggMTI3LjE3OCA3MC4yNzkxIDEyOC4zNjYgNjcuOTU0OUMxMjkuNTUzIDY1LjYzMDYgMTMwLjEzNCA2Mi45Nzc5IDEzMC4xMzQgNjAuMDIyMUMxMzAuMTM0IDU3LjA2NjIgMTI5LjU1MyA1NC4zMzc3IDEyOC4zNjYgNTIuMDg5M0MxMjcuMTc4IDQ5Ljg0MDggMTI1LjU2MiA0OC4wNDcxIDEyMy40NjUgNDYuNzMzNEMxMjEuMzY4IDQ1LjQxOTcgMTE4Ljg5MiA0NC43NjI4IDExNS45ODcgNDQuNzYyOEMxMTMuMDgxIDQ0Ljc2MjggMTEwLjcwNyA0NS40MTk3IDEwOC42MSA0Ni43MzM0QzEwNi41MTMgNDguMDQ3MSAxMDQuOTIxIDQ5Ljg0MDggMTAzLjgxIDUyLjEzOThDMTAyLjY5OCA1NC40Mzg4IDEwMi4xNDIgNTcuMDY2MiAxMDIuMTQyIDYwLjAyMjFDMTAyLjE0MiA2Mi45Nzc5IDEwMi42OTggNjUuNjA1MyAxMDMuODEgNjcuOTA0M0MxMDQuOTIxIDcwLjIwMzMgMTA2LjUxMyA3MS45NzE4IDEwOC42MSA3My4yNjAyQzExMC43MDcgNzQuNTQ4NyAxMTMuMTU3IDc1LjE4MDMgMTE1Ljk4NyA3NS4xODAzWiIgZmlsbD0iIzI4NTQ5OCIvPgo8cGF0aCBkPSJNMTcxLjU2OCA4Ni40OTkzQzE2Ni42NDEgODYuNDk5MyAxNjIuMjk2IDg1LjM2MjUgMTU4LjQ4MSA4My4xMTRDMTU0LjY2NiA4MC44NjU1IDE1MS42ODUgNzcuNzU4MSAxNDkuNTM4IDczLjgxN0MxNDcuMzkxIDY5Ljg3NTggMTQ2LjMwNCA2NS4zNTM2IDE0Ni4zMDQgNjAuMjI1MUMxNDYuMzA0IDU1LjA5NjYgMTQ3LjM0IDUwLjQ0ODEgMTQ5LjQzNyA0Ni40ODE3QzE1MS41MzQgNDIuNTE1MyAxNTQuNDY0IDM5LjM4MjYgMTU4LjIyOSAzNy4xMzQxQzE2MS45OTMgMzQuODg1NiAxNjYuMzEzIDMzLjc0ODggMTcxLjE2NCAzMy43NDg4QzE3Ni4wMTQgMzMuNzQ4OCAxODAuNTYyIDM0LjgwOTkgMTg0LjIgMzYuOTMyQzE4Ny44MzggMzkuMDU0MiAxOTAuNjQyIDQyLjAxIDE5Mi42MzggNDUuNzc0M0MxOTQuNjM0IDQ5LjUzODYgMTk1LjYxOSA1NC4wNjA4IDE5NS42MTkgNTkuMzE1NlY2My4wNTQ2TDE1Mi43NzIgNjMuMTU1N0wxNTIuOTc0IDU1LjI3MzRIMTgzLjM5MUMxODMuMzkxIDUxLjgzNzYgMTgyLjMwNSA0OS4wODM4IDE4MC4xMDcgNDYuOTg2OUMxNzcuOTA5IDQ0Ljg5MDEgMTc0Ljk3OCA0My44NTQyIDE3MS4yNjUgNDMuODU0MkMxNjguMzU5IDQzLjg1NDIgMTY1LjkzNCA0NC40NjA2IDE2My45MzggNDUuNjczMkMxNjEuOTQyIDQ2Ljg4NTkgMTYwLjQ1MiA0OC43MDQ5IDE1OS40NDEgNTEuMTMwMkMxNTguNDMxIDUzLjU1NTUgMTU3LjkyNSA1Ni41MTEzIDE1Ny45MjUgNjAuMDIzQzE1Ny45MjUgNjUuNDA0MiAxNTkuMDg4IDY5LjQ5NjkgMTYxLjQxMiA3Mi4yNTA2QzE2My43MzYgNzUuMDA0NCAxNjcuMTk3IDc2LjM5MzkgMTcxLjc3IDc2LjM5MzlDMTc1LjEzIDc2LjM5MzkgMTc3LjkwOSA3NS43NjIzIDE4MC4xMDcgNzQuNDczOEMxODIuMzA1IDczLjE4NTQgMTgzLjcyIDcxLjM2NjQgMTg0LjQwMiA2OS4wMTY5SDE5NS44MjFDMTk0LjczNSA3NC40NzM4IDE5Mi4wNTcgNzguNzQzNCAxODcuNzg3IDgxLjg1MDhDMTgzLjUxOCA4NC45NTgyIDE3OC4xMTEgODYuNDk5MyAxNzEuNTY4IDg2LjQ5OTNaIiBmaWxsPSIjMjg1NDk4Ii8+CjxwYXRoIGQ9Ik0yNzQuMzk3IDg2LjQ5OTNDMjY5LjQ3MSA4Ni40OTkzIDI2NS4xMjYgODUuMzYyNSAyNjEuMzExIDgzLjExNEMyNTcuNDk2IDgwLjg2NTUgMjU0LjUxNSA3Ny43NTgxIDI1Mi4zNjggNzMuODE3QzI1MC4yMiA2OS44NzU4IDI0OS4xMzQgNjUuMzUzNiAyNDkuMTM0IDYwLjIyNTFDMjQ5LjEzNCA1NS4wOTY2IDI1MC4xNyA1MC40NDgxIDI1Mi4yNjYgNDYuNDgxN0MyNTQuMzYzIDQyLjUxNTMgMjU3LjI5NCAzOS4zODI2IDI2MS4wNTggMzcuMTM0MUMyNjQuODIzIDM0Ljg4NTYgMjY5LjE0MyAzMy43NDg4IDI3My45OTMgMzMuNzQ4OEMyNzguODQ0IDMzLjc0ODggMjgzLjM5MSAzNC44MDk5IDI4Ny4wMjkgMzYuOTMyQzI5MC42NjcgMzkuMDU0MiAyOTMuNDcyIDQyLjAxIDI5NS40NjcgNDUuNzc0M0MyOTcuNDYzIDQ5LjUzODYgMjk4LjQ0OCA1NC4wNjA4IDI5OC40NDggNTkuMzE1NlY2My4wNTQ2TDI1NS42MDEgNjMuMTU1N0wyNTUuODAzIDU1LjI3MzRIMjg2LjIyMUMyODYuMjIxIDUxLjgzNzYgMjg1LjEzNSA0OS4wODM4IDI4Mi45MzcgNDYuOTg2OUMyODAuNzM5IDQ0Ljg5MDEgMjc3LjgwOCA0My44NTQyIDI3NC4wOTQgNDMuODU0MkMyNzEuMTg5IDQzLjg1NDIgMjY4Ljc2NCA0NC40NjA2IDI2Ni43NjggNDUuNjczMkMyNjQuNzcyIDQ2Ljg4NTkgMjYzLjI4MSA0OC43MDQ5IDI2Mi4yNzEgNTEuMTMwMkMyNjEuMjYgNTMuNTU1NSAyNjAuNzU1IDU2LjUxMTMgMjYwLjc1NSA2MC4wMjNDMjYwLjc1NSA2NS40MDQyIDI2MS45MTcgNjkuNDk2OSAyNjQuMjQxIDcyLjI1MDZDMjY2LjU2NiA3NS4wMDQ0IDI3MC4wMjcgNzYuMzkzOSAyNzQuNiA3Ni4zOTM5QzI3Ny45NiA3Ni4zOTM5IDI4MC43MzkgNzUuNzYyMyAyODIuOTM3IDc0LjQ3MzhDMjg1LjEzNSA3My4xODU0IDI4Ni41NDkgNzEuMzY2NCAyODcuMjMxIDY5LjAxNjlIMjk4LjY1MUMyOTcuNTY0IDc0LjQ3MzggMjk0Ljg4NiA3OC43NDM0IDI5MC42MTcgODEuODUwOEMyODYuMzQ3IDg0Ljk1ODIgMjgwLjk0MSA4Ni40OTkzIDI3NC4zOTcgODYuNDk5M1oiIGZpbGw9IiMyODU0OTgiLz4KPHBhdGggZD0iTTMxNC43MiA4NS4xODQ3SDMwMi40OTJWMTBIMzE0LjcyVjg1LjE4NDdaIiBmaWxsPSIjMjg1NDk4Ii8+CjxwYXRoIGQ9Ik0yMDcuMjg0IDMzLjMxOTJMMjA3LjQxIDMzLjQ5ODlMMjE4LjY1OCA0OS40NTAxTDIxOC42NjcgNDkuNDYxOEwyMTguNjc0IDQ5LjQ3MzVDMjIyLjMyMiA1NS40NzQ4IDIyMi4xMTMgNjIuNjM0OCAyMTguNjgxIDY4LjcwODlMMjE4LjY3MyA2OC43MjI1TDIxOC42NjQgNjguNzM2MkwyMDcuNDkgODUuNDYxOEwyMDcuMzY0IDg1LjY0OTNIMjA3LjEyNEMyMDMuMDQxIDg1Ljc0NjMgMTk5LjA1NCA4NS43NDYgMTk0Ljc3MSA4NS42MDA1TDE5NC4wMDcgODUuNTc1MUwxOTQuNDM2IDg0Ljk0MTNMMjA4Ljg1MiA2My42NjQ5QzIxMC44ODQgNjAuNTc1MyAyMTAuNzIyIDU2Ljg1NDggMjA4LjQyNyA1My45MjM3TDIwOC40MiA1My45MTQ5TDIwOC40MTQgNTMuOTA3MUwxOTQuMzY2IDMzLjk4NTJMMTkzLjg5NiAzMy4zMTkySDIwNy4yODRaIiBmaWxsPSIjMjg1NDk4IiBzdHJva2U9IiMyODU0OTgiIHN0cm9rZS13aWR0aD0iMC44NDUxMjEiLz4KPHBhdGggZD0iTTI1Mi4xMzQgMzMuMzE5MkwyNTEuNjg0IDMzLjk4MDNMMjM4LjA4OSA1My45MDEyTDIzOC4wODMgNTMuOTFMMjM4LjA3NyA1My45MTc4QzIzNS44NTQgNTYuODUxOCAyMzUuNjk2IDYwLjU4MTEgMjM3LjY2OCA2My42NzQ3TDI1MS42MTcgODQuOTQ3MUwyNTIuMDI4IDg1LjU3NDFMMjUxLjI3OCA4NS42MDA1QzI0Ny4xMzMgODUuNzQ2IDI0My4yNzQgODUuNzQ2MyAyMzkuMzIyIDg1LjY0OTNIMjM5LjA3OUwyMzguOTU0IDg1LjQ1NTlMMjI4LjE0IDY4LjczMDNMMjI4LjEzMSA2OC43MTc3TDIyOC4xMjUgNjguNzA0QzIyNC44MDQgNjIuNjMyNCAyMjQuNjAyIDU1LjQ3NzggMjI4LjEzIDQ5LjQ3OTRMMjI4LjEzOCA0OS40NjY3TDIyOC4xNDYgNDkuNDU1TDIzOS4wMzEgMzMuNTAzOEwyMzkuMTU3IDMzLjMxOTJIMjUyLjEzNFoiIGZpbGw9IiMyODU0OTgiIHN0cm9rZT0iIzI4NTQ5OCIgc3Ryb2tlLXdpZHRoPSIwLjg0NTEyMSIvPgo8cmVjdCB4PSIyMC4xNDExIiB5PSIxNi4zMzg0IiB3aWR0aD0iMTIuNjc2OCIgaGVpZ2h0PSIxMi42NzY4IiBmaWxsPSIjMjg1NDk4Ii8+Cjwvc3ZnPgo=" alt="indexel" />
+  <div class="header-divider"></div>
   <div>
     <strong>Email Signature Generator</strong>
     <span>Indexel Engineering Limited</span>
@@ -114,17 +147,16 @@
 </header>
 
 <div class="main">
-
   <div class="form-panel">
     <div class="section-title">Your Details</div>
 
     <div class="field">
       <label>Full Name</label>
-      <input id="f-name" type="text" placeholder="e.g. Amit Singhal" oninput="render()" />
+      <input id="f-name" type="text" placeholder="e.g. Divyansh Goenka" value="Divyansh Goenka" oninput="render()" />
     </div>
     <div class="field">
       <label>Designation</label>
-      <input id="f-title" type="text" placeholder="e.g. Director" oninput="render()" />
+      <input id="f-title" type="text" placeholder="e.g. Director" value="Sr. Engineer – Energy Automation" oninput="render()" />
     </div>
     <div class="field">
       <label>Email Address</label>
@@ -132,15 +164,21 @@
     </div>
     <div class="field">
       <label>Mobile Number</label>
-      <input id="f-mobile" type="text" placeholder="+91-XXXXX XXXXX" oninput="render()" />
+      <div class="phone-row">
+        <span class="phone-prefix">+91 –</span>
+        <input id="f-mobile" type="tel" placeholder="XXXXXXXXXX" maxlength="10" oninput="render()" />
+      </div>
     </div>
 
-    <button class="copy-btn" id="copy-btn" onclick="copySignature()">&#128203; Copy Signature to Clipboard</button>
+    <div class="btn-row">
+      <button class="copy-btn" id="copy-btn" onclick="copySignature()">&#128203; Copy Signature</button>
+      <button class="dl-btn" id="dl-btn" onclick="downloadPng()">&#8593; Download PNG</button>
+    </div>
 
     <div class="instructions">
       <strong>How to add in Outlook</strong>
       <ol>
-        <li>Click <code>Copy Signature</code> above</li>
+        <li>Click <code>Copy Signature</code></li>
         <li>Open Outlook &rarr; <code>File</code> &rarr; <code>Options</code></li>
         <li>Go to <code>Mail</code> &rarr; <code>Signatures</code></li>
         <li>Click <code>New</code>, give it a name</li>
@@ -148,15 +186,14 @@
         <li>Click <code>OK</code> to save</li>
       </ol>
     </div>
-
     <div class="instructions" style="margin-top:10px;">
       <strong>How to add in Gmail</strong>
       <ol>
-        <li>Click <code>Copy Signature</code> above</li>
+        <li>Click <code>Copy Signature</code></li>
         <li>Open Gmail &rarr; <code>Settings &#9881;</code> &rarr; <code>See all settings</code></li>
         <li>Scroll to <code>Signature</code> &rarr; <code>Create new</code></li>
         <li>Paste with <code>Ctrl + V</code></li>
-        <li>Scroll down and click <code>Save Changes</code></li>
+        <li>Scroll down &rarr; <code>Save Changes</code></li>
       </ol>
     </div>
   </div>
@@ -184,7 +221,6 @@
       </div>
     </div>
   </div>
-
 </div>
 
 <script>
@@ -192,19 +228,33 @@ const LOGO_SRC = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI1IiBoZWlnaHQ9Ijk1
 
 function val(id) { return document.getElementById(id).value.trim(); }
 
-function buildSig() {
-  const name   = val('f-name')   || 'Your Name';
-  const title  = val('f-title')  || 'Designation';
-  const email  = val('f-email')  || 'email@indexel.co.in';
-  const mobile = val('f-mobile') || '+91-XXXXX XXXXX';
+// Measure pixel width of a string in a given font using canvas
+function measureText(text, fontStr) {
+  const c = document.createElement('canvas');
+  const ctx = c.getContext('2d');
+  ctx.font = fontStr;
+  return ctx.measureText(text).width;
+}
 
-  return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;width:380px;">
+function buildSig() {
+  const name   = val('f-name')  || 'Your Name';
+  const title  = val('f-title') || 'Designation';
+  const email  = val('f-email') || 'email@indexel.co.in';
+  const mobileRaw = val('f-mobile').replace(/\D/g,'');
+  const mobile = mobileRaw ? '+91-' + mobileRaw : '+91-XXXXXXXXXX';
+
+  // Calculate line width based on designation length
+  // The line sits under "Name | Logo" row. We base it on designation text.
+  // Approximate: designation at 12px Arial ~ 0.6px per char, min 180px, max 320px
+  const desigWidth = Math.min(320, Math.max(180, Math.round(measureText(title, '12px Arial') + 120)));
+
+  return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;width:400px;">
   <tr><td style="padding:0 0 14px 0;font-size:13px;color:#222222;line-height:1;">Best Regards,</td></tr>
-  <tr><td style="padding:0 0 2px 0;font-size:16px;font-weight:bold;color:#0D274A;line-height:1;">${name}</td></tr>
-  <tr><td style="padding:0 0 10px 0;font-size:12px;color:#374151;line-height:24px;vertical-align:middle;">
-    ${title}&nbsp;&nbsp;|&nbsp;&nbsp;<img src="${LOGO_SRC}" alt="indexel" width="68" height="20" style="vertical-align:middle;display:inline;border:0;" />
+  <tr><td style="padding:0 0 2px 0;font-size:16px;font-weight:bold;color:#0D274A;line-height:1.2;">${name}</td></tr>
+  <tr><td style="padding:0 0 10px 0;font-size:12px;color:#374151;line-height:26px;vertical-align:middle;">
+    ${title}&nbsp;&nbsp;|&nbsp;&nbsp;<img src="${LOGO_SRC}" alt="indexel" width="64" height="19" style="vertical-align:middle;display:inline;border:0;" />
   </td></tr>
-  <tr><td style="padding:0 0 10px 0;"><table cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#285498;height:1px;width:260px;font-size:0;line-height:0;">&nbsp;</td></tr></table></td></tr>
+  <tr><td style="padding:0 0 10px 0;"><table cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#285498;height:1px;width:${desigWidth}px;font-size:0;line-height:0;">&nbsp;</td></tr></table></td></tr>
   <tr><td style="padding:0 0 2px 0;font-size:12px;font-weight:bold;color:#285498;line-height:1;">Indexel Engineering Limited</td></tr>
   <tr><td style="padding:0 0 1px 0;font-size:12px;color:#374151;line-height:1.5;">G1-12, IT Park, Road No. 4, IPIA,</td></tr>
   <tr><td style="padding:0 0 6px 0;font-size:12px;color:#374151;line-height:1.5;">Kota, Rajasthan &ndash; India 324005</td></tr>
@@ -224,23 +274,65 @@ function copySignature() {
   navigator.clipboard.write([new ClipboardItem({ 'text/html': blob })])
     .then(() => {
       const btn = document.getElementById('copy-btn');
-      btn.textContent = '✅ Copied! Now paste into Outlook or Gmail';
+      btn.textContent = '✅ Copied!';
       btn.classList.add('success');
-      setTimeout(() => { btn.textContent = '📋 Copy Signature to Clipboard'; btn.classList.remove('success'); }, 3500);
+      setTimeout(() => { btn.textContent = '\u{1F4CB} Copy Signature'; btn.classList.remove('success'); }, 3000);
     })
     .catch(() => {
       const tmp = document.createElement('div');
-      tmp.innerHTML = html;
+      tmp.innerHTML = buildSig();
       document.body.appendChild(tmp);
       const range = document.createRange();
       range.selectNodeContents(tmp);
       const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
+      sel.removeAllRanges(); sel.addRange(range);
       document.execCommand('copy');
       document.body.removeChild(tmp);
       alert('Copied! Paste into Outlook or Gmail.');
     });
+}
+
+async function downloadPng() {
+  const btn = document.getElementById('dl-btn');
+  btn.textContent = '⏳ Generating...';
+  btn.classList.add('loading');
+
+  try {
+    // Build a clean white container at 2x for high quality
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;background:#ffffff;padding:32px;display:inline-block;';
+    wrapper.innerHTML = buildSig();
+    document.body.appendChild(wrapper);
+
+    // Wait for images to load
+    await new Promise(r => setTimeout(r, 300));
+
+    const canvas = await html2canvas(wrapper, {
+      scale: 3,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      logging: false,
+      width: wrapper.offsetWidth,
+      height: wrapper.offsetHeight,
+    });
+
+    document.body.removeChild(wrapper);
+
+    // Download
+    const name = val('f-name').replace(/\s+/g,'_') || 'Signature';
+    const link = document.createElement('a');
+    link.download = `Indexel_Signature_${name}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+
+    btn.textContent = '✅ Downloaded!';
+    setTimeout(() => { btn.textContent = '\u2191 Download PNG'; btn.classList.remove('loading'); }, 2500);
+  } catch(e) {
+    document.body.removeChild(wrapper);
+    btn.textContent = '↑ Download PNG';
+    btn.classList.remove('loading');
+    alert('Download failed. Try copying instead.');
+  }
 }
 
 render();
