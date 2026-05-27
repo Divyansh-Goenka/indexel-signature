@@ -245,25 +245,57 @@ function buildSig() {
   const mobileRaw = val('f-mobile').replace(/\D/g,'');
   const mobile = mobileRaw ? '+91-' + mobileRaw : '+91-XXXXXXXXXX';
   const desigWidth = Math.min(320, Math.max(180, Math.round(measureText(title, '12px Arial') + 120)));
-  const LOGO = "https://divyansh-goenka.github.io/indexel-signature/indexel-logo.png";
 
-  return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;width:400px;">
-  <tr><td style="padding:0 0 14px 0;font-size:13px;color:#222222;line-height:1;">Best Regards,</td></tr>
-  <tr><td style="padding:0 0 1px 0;font-size:16px;font-weight:bold;color:#0D274A;line-height:1.1;">${name}</td></tr>
-  <tr><td style="padding:0 0 10px 0;">
-    <table cellpadding="0" cellspacing="0" border="0"><tr>
-      <td style="font-size:12px;color:#374151;vertical-align:middle;padding:0;line-height:1;">${title}</td>
-      <td style="font-size:12px;color:#374151;vertical-align:middle;padding:0 3px;line-height:1;">|</td>
-      <td style="vertical-align:middle;padding:0;line-height:0;"><img src="${LOGO}" alt="indexel" width="60" height="18" style="display:block;border:0;margin-top:-1px;" /></td>
-    </tr></table>
-  </td></tr>
-  <tr><td style="padding:0 0 10px 0;"><table cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#285498;height:1px;width:${desigWidth}px;font-size:0;line-height:0;">&nbsp;</td></tr></table></td></tr>
-  <tr><td style="padding:0 0 2px 0;font-size:12px;font-weight:bold;color:#285498;line-height:1;">Indexel Engineering Limited</td></tr>
-  <tr><td style="padding:0 0 1px 0;font-size:12px;color:#374151;line-height:1.5;">G1-12, IT Park, Road No. 4, IPIA,</td></tr>
-  <tr><td style="padding:0 0 6px 0;font-size:12px;color:#374151;line-height:1.5;">Kota, Rajasthan &ndash; India 324005</td></tr>
-  <tr><td style="padding:0 0 1px 0;font-size:12px;color:#374151;line-height:1.5;">Mobile: ${mobile}</td></tr>
-  <tr><td style="padding:0 0 1px 0;font-size:12px;color:#374151;line-height:1.5;">E-Mail: <a href="mailto:${email}" style="color:#374151;text-decoration:none;">${email}</a></td></tr>
-  <tr><td style="padding:0;font-size:12px;color:#374151;line-height:1.5;">Website: <a href="https://www.indexel.co.in" style="color:#374151;text-decoration:none;">www.indexel.co.in</a></td></tr>
+  // Logo: inline base64 PNG — works in all email clients including Outlook Windows
+  // No external URL fetch needed, no SVG (blocked by Outlook)
+  const LOGO = "data:image/png;base64,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";
+
+  // Outlook-safe signature using nested tables, no CSS shorthand, explicit font on every cell
+  return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;">
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#222222;padding:0 0 12px 0;">Best Regards,</td>
+  </tr>
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;color:#0D274A;padding:0 0 4px 0;">${name}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 0 10px 0;">
+      <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+        <tr>
+          <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0;vertical-align:middle;white-space:nowrap;">${title}</td>
+          <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 4px;vertical-align:middle;white-space:nowrap;">|</td>
+          <td style="padding:0;vertical-align:middle;line-height:1;">
+            <img src="${LOGO}" width="60" height="18" alt="indexel" style="width:60px;height:18px;display:inline-block;border:0;outline:0;vertical-align:middle;margin:0;padding:0;" />
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 0 10px 0;">
+      <table cellpadding="0" cellspacing="0" border="0"><tr>
+        <td style="background-color:#285498;height:1px;width:${desigWidth}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>
+      </tr></table>
+    </td>
+  </tr>
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#285498;padding:0 0 2px 0;">Indexel Engineering Limited</td>
+  </tr>
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 1px 0;">G1-12, IT Park, Road No. 4, IPIA,</td>
+  </tr>
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 6px 0;">Kota, Rajasthan &ndash; India 324005</td>
+  </tr>
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 1px 0;">Mobile: ${mobile}</td>
+  </tr>
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 1px 0;">E-Mail: <a href="mailto:${email}" style="color:#374151;text-decoration:none;">${email}</a></td>
+  </tr>
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0;">Website: <a href="https://www.indexel.co.in" style="color:#374151;text-decoration:none;">www.indexel.co.in</a></td>
+  </tr>
 </table>`;
 }
 
