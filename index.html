@@ -74,17 +74,6 @@
   input::placeholder { color: #b0bac8; }
 
   .btn-row { display: flex; gap: 10px; margin-top: 8px; }
-  .var-btn {
-    flex: 1; min-width: 70px; padding: 8px 6px; border: 1.5px solid var(--border);
-    border-radius: 8px; background: #fff; color: var(--muted);
-    font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600;
-    cursor: pointer; text-align: center; line-height: 1.4;
-    transition: all 0.15s;
-  }
-  .var-btn span { font-weight: 400; font-size: 10px; color: var(--muted); }
-  .var-btn:hover { border-color: var(--blue); color: var(--blue); }
-  .var-btn.active { border-color: var(--blue); background: var(--blue); color: #fff; }
-  .var-btn.active span { color: #cce0ff; }
   .copy-btn, .dl-btn {
     flex: 1; padding: 12px 8px;
     border: none; border-radius: 8px;
@@ -159,13 +148,6 @@
 
 <div class="main">
   <div class="form-panel">
-    <div class="section-title" style="margin-bottom:10px;">Signature Style</div>
-    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
-      <button class="var-btn active" data-v="1" onclick="setVariant(this)">Variation 1<br><span>Classic</span></button>
-      <button class="var-btn" data-v="2" onclick="setVariant(this)">Variation 2<br><span>Footer Strip</span></button>
-      <button class="var-btn" data-v="3" onclick="setVariant(this)">Variation 3<br><span>Two-Tone</span></button>
-      <button class="var-btn" data-v="4" onclick="setVariant(this)">Variation 4<br><span>Logo Below</span></button>
-    </div>
     <div class="section-title">Your Details</div>
 
     <div class="field">
@@ -254,109 +236,36 @@ function measureText(text, fontStr) {
 }
 
 function buildSig() {
-  const rawName  = val('f-name');
-  const rawTitle = val('f-title');
-  const name     = rawName  || 'Your Name';
-  const title    = rawTitle || 'Designation';
+  const name     = val('f-name')  || 'Your Name';
+  const title    = val('f-title') || 'Designation';
   const email    = val('f-email') || 'yourname@indexel.co.in';
   const mobileRaw = val('f-mobile').replace(/\D/g,'');
   const mobile   = mobileRaw ? '+91-' + mobileRaw : '+91-XXXXXXXXXX';
   const desigWidth = Math.min(320, Math.max(180, Math.round(measureText(title, '12px Arial') + 120)));
   const LOGO = "data:image/png;base64,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";
-  const variant = document.querySelector('.var-btn.active') ? document.querySelector('.var-btn.active').dataset.v : '1';
 
-  const ADDR1 = 'G1-12, IT Park, Road No. 4, IPIA,';
-  const ADDR2 = 'Kota, Rajasthan &ndash; India 324005';
-  const FORMERLY = '(Formerly known as Indexel Engineering Pvt. Ltd.)';
-  const VERTICALS = 'Electrical &nbsp;|&nbsp; Automation &nbsp;|&nbsp; Energy &nbsp;|&nbsp; Instrumentation &nbsp;|&nbsp; BESS';
-  const VERTICALS_PIPE = '&#9646; Electrical &nbsp;&nbsp; &#9646; Automation &nbsp;&nbsp; &#9646; Energy &nbsp;&nbsp; &#9646; Instrumentation &nbsp;&nbsp; &#9646; BESS';
-
-  // ── Shared contact block rows (used by all variants) ──
-  const contactRows = `
-  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#285498;padding:0 0 2px 0;">Indexel Engineering Limited</td></tr>
-  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#888888;padding:0 0 3px 0;font-style:italic;">${FORMERLY}</td></tr>
-  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 1px 0;">${ADDR1}</td></tr>
-  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 6px 0;">${ADDR2}</td></tr>
-  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 1px 0;">Mobile: ${mobile}</td></tr>
-  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 1px 0;">E-Mail: <a href="mailto:${email}" style="color:#374151;text-decoration:none;">${email}</a></td></tr>
-  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0;">Website: <a href="https://www.indexel.co.in" style="color:#374151;text-decoration:none;">www.indexel.co.in</a></td></tr>`;
-
-  const nameRow = `<tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;color:#0D274A;padding:0 0 1px 0;">${name}</td></tr>`;
-  const greetRow = `<tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#222222;padding:0 0 12px 0;">Best Regards,</td></tr>`;
-  const desigLogoRow = `<tr><td style="padding:0 0 4px 0;"><table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>
+  return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;">
+  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#222222;padding:0 0 12px 0;">Best Regards,</td></tr>
+  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;color:#0D274A;padding:0 0 1px 0;">${name}</td></tr>
+  <tr><td style="padding:0 0 4px 0;">
+    <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>
       <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0;vertical-align:middle;white-space:nowrap;">${title}</td>
       <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 4px;vertical-align:middle;white-space:nowrap;">|</td>
       <td style="padding:0;vertical-align:middle;line-height:1;"><img src="${LOGO}" width="72" height="21" alt="indexel" style="width:72px;height:21px;display:inline-block;border:0;outline:0;vertical-align:middle;margin:0;padding:0;" /></td>
-    </tr></table></td></tr>`;
-
-  // ── VARIATION 1: Original (current) ──
-  if (variant === '1') {
-    return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;">
-  ${greetRow}${nameRow}${desigLogoRow}
-  <tr><td style="padding:0 0 10px 0;"><table cellpadding="0" cellspacing="0" border="0"><tr>
-    <td style="background-color:#285498;height:1px;width:${desigWidth}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>
-  </tr></table></td></tr>
-  ${contactRows}
-  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#0299CA;padding:4px 0 0 0;letter-spacing:0.3px;">${VERTICALS}</td></tr>
-</table>`;
-  }
-
-  // ── VARIATION 2: Minimalist — verticals at bottom as footer strip ──
-  if (variant === '2') {
-    return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;">
-  ${greetRow}${nameRow}${desigLogoRow}
-  <tr><td style="padding:0 0 10px 0;"><table cellpadding="0" cellspacing="0" border="0"><tr>
-    <td style="background-color:#285498;height:1px;width:${desigWidth}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>
-  </tr></table></td></tr>
-  ${contactRows}
-  <tr><td style="padding:8px 0 0 0;">
-    <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;width:100%;"><tr>
-      <td style="background-color:#0D274A;padding:6px 10px;font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#ffffff;letter-spacing:0.5px;white-space:nowrap;">
-        ${VERTICALS_PIPE}
-      </td>
     </tr></table>
   </td></tr>
-</table>`;
-  }
-
-  // ── VARIATION 3: Two-tone divider (short navy + full-width teal) ──
-  if (variant === '3') {
-    return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;">
-  ${greetRow}${nameRow}${desigLogoRow}
-  <tr><td style="padding:0 0 3px 0;"><table cellpadding="0" cellspacing="0" border="0"><tr>
-    <td style="background-color:#0D274A;height:2px;width:${desigWidth}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>
-  </tr></table></td></tr>
   <tr><td style="padding:0 0 10px 0;"><table cellpadding="0" cellspacing="0" border="0"><tr>
-    <td style="background-color:#0299CA;height:1px;width:360px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>
+    <td style="background-color:#285498;height:1px;width:${desigWidth}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>
   </tr></table></td></tr>
-  ${contactRows}
-  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#0299CA;padding:4px 0 0 0;letter-spacing:0.3px;">${VERTICALS}</td></tr>
+  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#285498;padding:0 0 2px 0;">Indexel Engineering Limited</td></tr>
+  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#888888;padding:0 0 3px 0;font-style:italic;">(Formerly known as Indexel Engineering Pvt. Ltd.)</td></tr>
+  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 1px 0;">G1-12, IT Park, Road No. 4, IPIA,</td></tr>
+  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 6px 0;">Kota, Rajasthan &ndash; India 324005</td></tr>
+  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 1px 0;">Mobile: ${mobile}</td></tr>
+  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 1px 0;">E-Mail: <a href="mailto:${email}" style="color:#374151;text-decoration:none;">${email}</a></td></tr>
+  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 6px 0;">Website: <a href="https://www.indexel.co.in" style="color:#374151;text-decoration:none;">www.indexel.co.in</a></td></tr>
+  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#0299CA;padding:0;letter-spacing:0.3px;">Electrical &nbsp;|&nbsp; Automation &nbsp;|&nbsp; Energy &nbsp;|&nbsp; Instrumentation &nbsp;|&nbsp; BESS</td></tr>
 </table>`;
-  }
-
-  // ── VARIATION 4: Logo below designation, then details ──
-  if (variant === '4') {
-    return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;">
-  ${greetRow}${nameRow}
-  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#374151;padding:0 0 8px 0;">${title}</td></tr>
-  <tr><td style="padding:0 0 4px 0;line-height:1;">
-    <img src="${LOGO}" width="90" height="27" alt="indexel" style="width:90px;height:27px;display:block;border:0;outline:0;margin:0;padding:0;" />
-  </td></tr>
-  <tr><td style="padding:0 0 10px 0;"><table cellpadding="0" cellspacing="0" border="0"><tr>
-    <td style="background-color:#285498;height:1px;width:240px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>
-  </tr></table></td></tr>
-  ${contactRows}
-  <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#0299CA;padding:4px 0 0 0;letter-spacing:0.3px;">${VERTICALS}</td></tr>
-</table>`;
-  }
-
-  return '';
-}
-
-function setVariant(btn) {
-  document.querySelectorAll('.var-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  render();
 }
 
 function render() {
