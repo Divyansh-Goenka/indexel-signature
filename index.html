@@ -438,6 +438,13 @@ function buildSig() {
   return '';
 }
 
+
+function setVariant(btn) {
+  document.querySelectorAll('.var-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
 function render() {
   document.getElementById('sig-container').innerHTML = buildSig();
 }
