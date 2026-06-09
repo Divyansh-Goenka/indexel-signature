@@ -160,15 +160,12 @@
   <div class="form-panel">
     <div class="section-title" style="margin-bottom:10px;">Signature Style</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;">
-      <button class="var-btn active" data-v="orig" onclick="setVariant(this)">Original<span>Classic inline</span></button>
-      <button class="var-btn" data-v="a" onclick="setVariant(this)">Variant A<span>Logo before line</span></button>
-      <button class="var-btn" data-v="b" onclick="setVariant(this)">Variant B<span>Logo after line</span></button>
-      <button class="var-btn" data-v="e" onclick="setVariant(this)">Variant E<span>Logo at bottom</span></button>
-      <button class="var-btn" data-v="d1" onclick="setVariant(this)">Design 1<span>Teal left border</span></button>
-      <button class="var-btn" data-v="d2" onclick="setVariant(this)">Design 2<span>Navy header block</span></button>
-      <button class="var-btn" data-v="d3" onclick="setVariant(this)">Design 3<span>Two column</span></button>
-      <button class="var-btn" data-v="d4" onclick="setVariant(this)">Design 4<span>Minimal card</span></button>
-      <button class="var-btn" data-v="d5" onclick="setVariant(this)">Design 5<span>Two-tone divider</span></button>
+      <button class="var-btn active" data-v="classic" onclick="setVariant(this)">Classic<span>Name · Designation · Logo inline</span></button>
+      <button class="var-btn" data-v="logo-above" onclick="setVariant(this)">Logo Above Line<span>Logo sits above divider</span></button>
+      <button class="var-btn" data-v="logo-below" onclick="setVariant(this)">Logo Below Line<span>Logo sits below divider</span></button>
+      <button class="var-btn" data-v="logo-bottom" onclick="setVariant(this)">Logo at Bottom<span>Logo closes signature</span></button>
+      <button class="var-btn" data-v="teal-bar" onclick="setVariant(this)">Teal Side Bar<span>Teal accent bar on left</span></button>
+      <button class="var-btn" data-v="minimal" onclick="setVariant(this)">Minimal Card<span>Compact · dot-separated</span></button>
     </div>
     <div class="section-title">Your Details</div>
 
@@ -310,7 +307,7 @@ function buildSig() {
   }
 
   // ── ORIGINAL: Name | Logo inline ──
-  if (v === 'orig') {
+  if (v === 'classic') {
     var desigLogo =
       '<tr><td style="padding:0 0 4px 0;"><table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>' +
       '<td style="font-family:Arial,sans-serif;font-size:12px;color:#374151;padding:0;vertical-align:middle;white-space:nowrap;">' + title + '</td>' +
@@ -321,17 +318,17 @@ function buildSig() {
   }
 
   // ── VARIANT A: Name, Title, Logo, Line, Contact ──
-  if (v === 'a') {
+  if (v === 'logo-above') {
     return wrap(greet + nameRow + titleRow + logoRow(100, 4) + line(260) + contactBlock);
   }
 
   // ── VARIANT B: Name, Title, Line, Logo, Contact ──
-  if (v === 'b') {
+  if (v === 'logo-below') {
     return wrap(greet + nameRow + titleRow + line(260) + logoRow(100, 6) + contactBlock);
   }
 
   // ── VARIANT E: Name, Title, Line, Contact, Logo at very bottom ──
-  if (v === 'e') {
+  if (v === 'logo-bottom') {
     var vertR = cell(verticals, 10, '#0299CA', '0', 'letter-spacing:0.3px;');
     var contactNoVert =
       cell('<b>Indexel Engineering Limited</b>', 12, '#285498', '0 0 2px 0') +
@@ -345,7 +342,7 @@ function buildSig() {
   }
 
   // ── DESIGN 1: Teal left border accent ──
-  if (v === 'd1') {
+  if (v === 'teal-bar') {
     var innerTable =
       '<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>' +
       '<td style="background:#0299CA;width:3px;padding:0;" width="3">&nbsp;</td>' +
@@ -366,57 +363,8 @@ function buildSig() {
     );
   }
 
-  // ── DESIGN 2: Coloured header block (navy bg) ──
-  if (v === 'd2') {
-    var headerBlock =
-      '<tr><td style="padding:0 0 8px 0;">' +
-        '<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">' +
-          '<tr><td style="background:#0D274A;padding:10px 14px;">' +
-            '<table cellpadding="0" cellspacing="0" border="0"><tr>' +
-              '<td style="vertical-align:middle;padding:0 16px 0 0;">' +
-                '<div style="font-family:Arial,sans-serif;font-size:16px;font-weight:bold;color:#ffffff;line-height:1.2;">' + name + '</div>' +
-                '<div style="font-family:Arial,sans-serif;font-size:11px;color:#A8CCEE;margin-top:2px;">' + title + '</div>' +
-              '</td>' +
-              '<td style="vertical-align:middle;padding:0;">' +
-                '<img src="' + LOGO_SRC + '" width="80" height="21" alt="indexel" style="width:80px;height:21px;display:block;border:0;filter:brightness(0) invert(1);" />' +
-              '</td>' +
-            '</tr></table>' +
-          '</td></tr>' +
-        '</table>' +
-      '</td></tr>';
-    return wrap(greet + headerBlock + contactBlock);
-  }
-
-  // ── DESIGN 3: Two column layout ──
-  if (v === 'd3') {
-    var twoCol =
-      '<tr><td style="padding:0 0 8px 0;">' +
-        '<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>' +
-          '<td style="vertical-align:top;padding:0 12px 0 0;border-right:2px solid #0299CA;width:130px;">' +
-            '<div style="font-family:Arial,sans-serif;font-size:15px;font-weight:bold;color:#0D274A;">' + name + '</div>' +
-            '<div style="font-family:Arial,sans-serif;font-size:11px;color:#374151;margin-top:2px;">' + title + '</div>' +
-            '<div style="margin-top:8px;line-height:1;">' +
-              '<img src="' + LOGO_SRC + '" width="80" height="21" alt="indexel" style="width:80px;height:21px;display:block;border:0;" />' +
-            '</div>' +
-          '</td>' +
-          '<td style="vertical-align:top;padding:0 0 0 14px;">' +
-            '<table cellpadding="0" cellspacing="0" border="0">' +
-              cell('<b>Indexel Engineering Limited</b>', 11, '#285498', '0 0 1px 0') +
-              cell(formerly, 9, '#888888', '0 0 3px 0', 'font-style:italic;') +
-              cell('G1-12, IT Park, IPIA, Kota', 11, '#374151', '0 0 1px 0') +
-              cell('Mobile: ' + mobile, 11, '#374151', '0 0 1px 0') +
-              cell('<a href="mailto:' + email + '" style="color:#374151;text-decoration:none;">' + email + '</a>', 11, '#374151', '0 0 1px 0') +
-              cell('<a href="https://www.indexel.co.in" style="color:#374151;text-decoration:none;">www.indexel.co.in</a>', 11, '#374151', '0 0 4px 0') +
-              cell(verticals, 9, '#0299CA', '0', 'letter-spacing:0.3px;') +
-            '</table>' +
-          '</td>' +
-        '</tr></table>' +
-      '</td></tr>';
-    return wrap(greet + twoCol);
-  }
-
   // ── DESIGN 4: Minimal card style ──
-  if (v === 'd4') {
+  if (v === 'minimal') {
     return wrap(
       greet +
       logoRow(110, 6) +
@@ -426,21 +374,6 @@ function buildSig() {
       cell(formerly, 10, '#888888', '0 0 2px 0', 'font-style:italic;') +
       cell('Mobile: ' + mobile + ' &nbsp;·&nbsp; <a href="mailto:' + email + '" style="color:#374151;text-decoration:none;">' + email + '</a>', 11, '#374151', '0 0 6px 0') +
       cell(verticals, 10, '#0299CA', '0', 'letter-spacing:0.3px;')
-    );
-  }
-
-  // ── DESIGN 5: Two-tone divider ──
-  if (v === 'd5') {
-    return wrap(
-      greet + nameRow +
-      '<tr><td style="padding:0 0 4px 0;"><table cellpadding="0" cellspacing="0" border="0"><tr>' +
-        '<td style="font-family:Arial,sans-serif;font-size:12px;color:#374151;padding:0;vertical-align:middle;white-space:nowrap;">' + title + '</td>' +
-        '<td style="font-size:12px;color:#374151;padding:0 4px;vertical-align:middle;white-space:nowrap;">|</td>' +
-        '<td style="padding:0;vertical-align:middle;line-height:1;"><img src="' + LOGO_SRC + '" width="72" height="19" alt="indexel" style="width:72px;height:19px;display:inline-block;border:0;vertical-align:middle;margin:0;" /></td>' +
-      '</tr></table></td></tr>' +
-      line(desigW, '#0D274A', 2) +
-      line(320, '#0299CA', 1) +
-      contactBlock
     );
   }
 
