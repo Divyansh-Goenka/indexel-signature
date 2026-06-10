@@ -74,6 +74,18 @@
   input::placeholder { color: #b0bac8; }
 
   .btn-row { display: flex; gap: 10px; margin-top: 8px; }
+  .lb-btn {
+    padding:7px 10px; border:1.5px solid var(--border); border-radius:6px;
+    background:#fff; color:var(--muted); font-family:'DM Sans',sans-serif;
+    font-size:10px; font-weight:600; cursor:pointer; transition:all 0.15s;
+    white-space:nowrap;
+  }
+  .lb-btn span { font-weight:400; font-size:9px; color:var(--muted); display:block; }
+  .lb-btn:hover { border-color:var(--blue); color:var(--blue); }
+  .lb-btn.active { border-color:var(--blue); background:var(--blue); color:#fff; }
+  .lb-btn.active span { color:#cce0ff; }
+  #lb-switcher { display:none; margin-bottom:16px; }
+  #lb-switcher.visible { display:block; }
   .var-btn {
     flex:1; min-width:72px; padding:8px 6px; border:1.5px solid var(--border);
     border-radius:8px; background:#fff; color:var(--muted);
@@ -166,6 +178,16 @@
       <button class="var-btn" data-v="logo-bottom" onclick="setVariant(this)">Logo at Bottom<span>Logo closes signature</span></button>
       <button class="var-btn" data-v="teal-bar" onclick="setVariant(this)">Teal Side Bar<span>Teal accent bar on left</span></button>
       <button class="var-btn" data-v="minimal" onclick="setVariant(this)">Minimal Card<span>Compact · dot-separated</span></button>
+    </div>
+    <div id="lb-switcher">
+      <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:8px;">Logo at Bottom Style</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="lb-btn active" data-lb="lb1" onclick="setLbVariant(this)">LB-1<span>Light line</span></button>
+        <button class="lb-btn" data-lb="lb2" onclick="setLbVariant(this)">LB-2<span>No divider</span></button>
+        <button class="lb-btn" data-lb="lb3" onclick="setLbVariant(this)">LB-3<span>Logo centred</span></button>
+        <button class="lb-btn" data-lb="lb4" onclick="setLbVariant(this)">LB-4<span>Logo + verticals row</span></button>
+        <button class="lb-btn" data-lb="lb6" onclick="setLbVariant(this)">LB-6<span>Large centred logo</span></button>
+      </div>
     </div>
     <div class="section-title">Your Details</div>
 
@@ -327,10 +349,15 @@ function buildSig() {
     return wrap(greet + nameRow + titleRow + line(260) + logoRow(100, 6) + contactBlock);
   }
 
-  // ── VARIANT E: Name, Title, Line, Contact, Logo at very bottom ──
+  // ── LOGO AT BOTTOM variants (lb1–lb6 except lb5) ──
   if (v === 'logo-bottom') {
-    var vertR = cell(verticals, 10, '#0299CA', '0', 'letter-spacing:0.3px;');
-    var contactNoVert =
+    var lbSub = document.querySelector('.lb-btn.active') ? document.querySelector('.lb-btn.active').dataset.lb : 'lb1';
+
+    var vertR      = cell(verticals, 10, '#0299CA', '0', 'letter-spacing:0.3px;');
+    var lightLine  = line(260, '#D4E4FA');
+    var tealLine   = line(320, '#0299CA');
+
+    var contactFull =
       cell('<b>Indexel Engineering Limited</b>', 12, '#285498', '0 0 2px 0') +
       cell(formerly, 10, '#888888', '0 0 3px 0', 'font-style:italic;') +
       cell('Mobile: ' + mobile, 12, '#374151', '0 0 1px 0') +
@@ -338,10 +365,66 @@ function buildSig() {
       cell('Website: <a href="https://www.indexel.co.in" style="color:#374151;text-decoration:none;">www.indexel.co.in</a>', 12, '#374151', '0 0 4px 0') +
       cell('G1-12, IT Park, Road No. 4, IPIA,', 12, '#374151', '0 0 1px 0') +
       cell('Kota, Rajasthan &ndash; India 324005', 12, '#374151', '0 0 6px 0');
-    return wrap(greet + nameRow + titleRow + line(260) + contactNoVert + line(260, '#D4E4FA') + logoRow(110, 4) + vertR);
+
+    var contactCompact =
+      cell('<b>Indexel Engineering Limited</b>', 12, '#285498', '0 0 2px 0') +
+      cell(formerly, 10, '#888888', '0 0 3px 0', 'font-style:italic;') +
+      cell('Mobile: ' + mobile + ' &nbsp;·&nbsp; <a href="mailto:' + email + '" style="color:#374151;text-decoration:none;">' + email + '</a>', 11, '#374151', '0 0 1px 0') +
+      cell('<a href="https://www.indexel.co.in" style="color:#374151;text-decoration:none;">www.indexel.co.in</a>', 11, '#374151', '0 0 4px 0') +
+      cell('G1-12, IT Park, IPIA, Kota, Rajasthan &ndash; 324005', 11, '#374151', '0 0 6px 0');
+
+    function logoBlock(w, align) {
+      var h = Math.round(w * 0.2593);
+      var tdStyle = align === 'center'
+        ? 'padding:6px 0;text-align:center;'
+        : 'padding:6px 0;';
+      var imgStyle = align === 'center'
+        ? 'display:inline-block;border:0;margin:0 auto;'
+        : 'display:block;border:0;margin:0;padding:0;';
+      return '<tr><td style="' + tdStyle + '">' +
+        '<img src="' + LOGO_SRC + '" width="' + w + '" height="' + h + '" alt="indexel" ' +
+        'style="width:' + w + 'px;height:' + h + 'px;' + imgStyle + '" /></td></tr>';
+    }
+
+    // LB-1: current — light blue line, logo, verticals
+    if (lbSub === 'lb1') {
+      return wrap(greet + nameRow + titleRow + line(260) + contactFull + lightLine + logoBlock(110, 'left') + vertR);
+    }
+    // LB-2: no second divider, just spacing
+    if (lbSub === 'lb2') {
+      var spacer = '<tr><td style="height:8px;font-size:0;line-height:0;"></td></tr>';
+      return wrap(greet + nameRow + titleRow + line(260) + contactFull + spacer + logoBlock(110, 'left') + vertR);
+    }
+    // LB-3: logo centred
+    if (lbSub === 'lb3') {
+      return wrap(greet + nameRow + titleRow + line(260) + contactFull + lightLine + logoBlock(110, 'center') + vertR);
+    }
+    // LB-4: logo + verticals on same row
+    if (lbSub === 'lb4') {
+      var h4 = Math.round(110 * 0.2593);
+      var sameRow =
+        '<tr><td style="padding:8px 0 0 0;">' +
+          '<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>' +
+            '<td style="vertical-align:middle;padding:0 12px 0 0;">' +
+              '<img src="' + LOGO_SRC + '" width="90" height="' + Math.round(90*0.2593) + '" alt="indexel" ' +
+              'style="width:90px;height:' + Math.round(90*0.2593) + 'px;display:block;border:0;" />' +
+            '</td>' +
+            '<td style="vertical-align:middle;font-family:Arial,sans-serif;font-size:10px;color:#0299CA;letter-spacing:0.3px;">' +
+              verticals +
+            '</td>' +
+          '</tr></table>' +
+        '</td></tr>';
+      return wrap(greet + nameRow + titleRow + line(260) + contactFull + lightLine + sameRow);
+    }
+    // LB-6: large centred logo, teal full line, verticals
+    if (lbSub === 'lb6') {
+      return wrap(greet + nameRow + titleRow + line(260) + contactCompact + logoBlock(130, 'center') + tealLine + vertR);
+    }
+
+    return wrap(greet + nameRow + titleRow + line(260) + contactFull + lightLine + logoBlock(110, 'left') + vertR);
   }
 
-  // ── DESIGN 1: Teal left border accent ──
+// ── DESIGN 1: Teal left border accent ──
   if (v === 'teal-bar') {
     var innerTable =
       '<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>' +
@@ -381,9 +464,17 @@ function buildSig() {
 }
 
 
+function setLbVariant(btn) {
+  document.querySelectorAll('.lb-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
 function setVariant(btn) {
   document.querySelectorAll('.var-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  var lbSwitcher = document.getElementById('lb-switcher');
+  if (lbSwitcher) lbSwitcher.classList.toggle('visible', btn.dataset.v === 'logo-bottom');
   render();
 }
 
