@@ -172,14 +172,10 @@
   <div class="form-panel">
     <div class="section-title" style="margin-bottom:10px;">Signature Style</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;">
-      <button class="var-btn active" data-v="classic" onclick="setVariant(this)">Classic<span>Name · Designation · Logo inline</span></button>
-      <button class="var-btn" data-v="logo-above" onclick="setVariant(this)">Logo Above Line<span>Logo sits above divider</span></button>
-      <button class="var-btn" data-v="logo-below" onclick="setVariant(this)">Logo Below Line<span>Logo sits below divider</span></button>
-      <button class="var-btn" data-v="logo-bottom" onclick="setVariant(this)">Logo at Bottom<span>Logo closes signature</span></button>
-      <button class="var-btn" data-v="teal-bar" onclick="setVariant(this)">Teal Side Bar<span>Teal accent bar on left</span></button>
-      <button class="var-btn" data-v="minimal" onclick="setVariant(this)">Minimal Card<span>Compact · dot-separated</span></button>
+      <button class="var-btn" data-v="classic" onclick="setVariant(this)">Classic<span>Name · Designation · Logo inline</span></button>
+      <button class="var-btn active" data-v="logo-bottom" onclick="setVariant(this)">Logo at Bottom<span>Logo closes signature</span></button>
     </div>
-    <div id="lb-switcher">
+    <div id="lb-switcher" class="visible">
       <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:8px;">Logo at Bottom Style</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
         <button class="lb-btn active" data-lb="lb1" onclick="setLbVariant(this)">LB-1<span>Light line</span></button>
@@ -339,15 +335,9 @@ function buildSig() {
     return wrap(greet + nameRow + desigLogo + line(desigW) + contactBlock);
   }
 
-  // ── VARIANT A: Name, Title, Logo, Line, Contact ──
-  if (v === 'logo-above') {
-    return wrap(greet + nameRow + titleRow + logoRow(100, 4) + line(260) + contactBlock);
-  }
+  
 
-  // ── VARIANT B: Name, Title, Line, Logo, Contact ──
-  if (v === 'logo-below') {
-    return wrap(greet + nameRow + titleRow + line(260) + logoRow(100, 6) + contactBlock);
-  }
+  
 
   // ── LOGO AT BOTTOM variants (lb1–lb6 except lb5) ──
   if (v === 'logo-bottom') {
@@ -424,43 +414,9 @@ function buildSig() {
     return wrap(greet + nameRow + titleRow + line(260) + contactFull + lightLine + logoBlock(110, 'left') + vertR);
   }
 
-// ── DESIGN 1: Teal left border accent ──
-  if (v === 'teal-bar') {
-    var innerTable =
-      '<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>' +
-      '<td style="background:#0299CA;width:3px;padding:0;" width="3">&nbsp;</td>' +
-      '<td style="width:10px;padding:0;" width="10"></td>' +
-      '<td style="padding:0;"><table cellpadding="0" cellspacing="0" border="0">' +
-        cell('<b>Indexel Engineering Limited</b>', 12, '#285498', '0 0 1px 0') +
-        cell(formerly, 10, '#888888', '0 0 3px 0', 'font-style:italic;') +
-        cell('G1-12, IT Park, Road No. 4, IPIA,', 12, '#374151', '0 0 1px 0') +
-        cell('Kota, Rajasthan &ndash; India 324005', 12, '#374151', '0 0 6px 0') +
-        cell('Mobile: ' + mobile, 12, '#374151', '0 0 1px 0') +
-        cell('E-Mail: <a href="mailto:' + email + '" style="color:#374151;text-decoration:none;">' + email + '</a>', 12, '#374151', '0 0 1px 0') +
-        cell('Website: <a href="https://www.indexel.co.in" style="color:#374151;text-decoration:none;">www.indexel.co.in</a>', 12, '#374151', '0 0 6px 0') +
-        cell(verticals, 10, '#0299CA', '0', 'letter-spacing:0.3px;') +
-      '</table></td></tr></table>';
-    return wrap(
-      greet + nameRow + titleRow + logoRow(90, 8) +
-      '<tr><td>' + innerTable + '</td></tr>'
-    );
-  }
 
-  // ── DESIGN 4: Minimal card style ──
-  if (v === 'minimal') {
-    return wrap(
-      greet +
-      logoRow(110, 6) +
-      cell(name + ' &nbsp;<span style="color:#aaa;">·</span>&nbsp; ' + title, 13, '#0D274A', '0 0 4px 0', 'font-weight:bold;') +
-      line(320, '#e0e0e0') +
-      cell('<b style="color:#285498;">Indexel Engineering Limited</b> &nbsp;·&nbsp; <a href="https://www.indexel.co.in" style="color:#374151;text-decoration:none;">www.indexel.co.in</a>', 11, '#374151', '0 0 2px 0') +
-      cell(formerly, 10, '#888888', '0 0 2px 0', 'font-style:italic;') +
-      cell('Mobile: ' + mobile + ' &nbsp;·&nbsp; <a href="mailto:' + email + '" style="color:#374151;text-decoration:none;">' + email + '</a>', 11, '#374151', '0 0 6px 0') +
-      cell(verticals, 10, '#0299CA', '0', 'letter-spacing:0.3px;')
-    );
-  }
 
-  return '';
+    return '';
 }
 
 
