@@ -382,8 +382,9 @@ function buildSig() {
     }
     // LB-2: no second divider, just spacing
     if (lbSub === 'lb2') {
-      var spacer = '<tr><td style="height:8px;font-size:0;line-height:0;"></td></tr>';
-      return wrap(greet + nameRow + titleRow + line(260) + contactFull + spacer + logoBlock(110, 'left') + vertR);
+      var spacer = '<tr><td style="height:3px;font-size:0;line-height:0;"></td></tr>';
+      var vertCompact = cell('Electrical | Automation | Energy | Instrumentation | BESS', 9, '#285498', '0', 'letter-spacing:0px;');
+      return wrap(greet + nameRow + titleRow + line(260) + contactFull + spacer + logoBlock(110, 'left') + vertCompact);
     }
     // LB-3: logo centred
     if (lbSub === 'lb3') {
