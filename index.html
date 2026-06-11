@@ -178,11 +178,8 @@
     <div id="lb-switcher" class="visible">
       <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:8px;">Logo at Bottom Style</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        <button class="lb-btn active" data-lb="lb1" onclick="setLbVariant(this)">LB-1<span>Light line</span></button>
-        <button class="lb-btn" data-lb="lb2" onclick="setLbVariant(this)">LB-2<span>No divider</span></button>
-        <button class="lb-btn" data-lb="lb3" onclick="setLbVariant(this)">LB-3<span>Logo centred</span></button>
+        <button class="lb-btn active" data-lb="lb2" onclick="setLbVariant(this)">LB-2<span>No divider</span></button>
         <button class="lb-btn" data-lb="lb4" onclick="setLbVariant(this)">LB-4<span>Logo + verticals row</span></button>
-        <button class="lb-btn" data-lb="lb6" onclick="setLbVariant(this)">LB-6<span>Large centred logo</span></button>
       </div>
     </div>
     <div class="section-title">Your Details</div>
@@ -341,7 +338,7 @@ function buildSig() {
 
   // ── LOGO AT BOTTOM variants (lb1–lb6 except lb5) ──
   if (v === 'logo-bottom') {
-    var lbSub = document.querySelector('.lb-btn.active') ? document.querySelector('.lb-btn.active').dataset.lb : 'lb1';
+    var lbSub = document.querySelector('.lb-btn.active') ? document.querySelector('.lb-btn.active').dataset.lb : 'lb2';
 
     var vertR      = cell(verticals, 9, '#285498', '0', 'letter-spacing:0px;');
     var lightLine  = line(200, '#D4E4FA');
@@ -376,20 +373,14 @@ function buildSig() {
         'style="width:' + w + 'px;height:' + h + 'px;' + imgStyle + '" /></td></tr>';
     }
 
-    // LB-1: current — light blue line, logo, verticals
-    if (lbSub === 'lb1') {
-      return wrap(greet + nameRow + titleRow + line(200) + contactFull + lightLine + logoBlock(110, 'left') + vertR);
-    }
+    
     // LB-2: no second divider, just spacing
     if (lbSub === 'lb2') {
       var spacer = '<tr><td style="height:3px;font-size:0;line-height:0;"></td></tr>';
       var vertCompact = cell('Electrical | Automation | Energy | Instrumentation | BESS', 9, '#285498', '0', 'letter-spacing:0px;');
       return wrap(greet + nameRow + titleRow + line(200) + contactFull + spacer + logoBlock(110, 'left') + vertCompact);
     }
-    // LB-3: logo centred
-    if (lbSub === 'lb3') {
-      return wrap(greet + nameRow + titleRow + line(200) + contactFull + lightLine + logoBlock(110, 'center') + vertR);
-    }
+    
     // LB-4: logo + verticals on same row
     if (lbSub === 'lb4') {
       var h4 = Math.round(110 * 0.2593);
@@ -400,23 +391,14 @@ function buildSig() {
               '<img src="' + LOGO_SRC + '" width="90" height="' + Math.round(90*0.2593) + '" alt="indexel" ' +
               'style="width:90px;height:' + Math.round(90*0.2593) + 'px;display:block;border:0;" />' +
             '</td>' +
-            '<td style="vertical-align:middle;font-family:Arial,sans-serif;font-size:10px;color:#0299CA;letter-spacing:0.3px;">' +
+            '<td style="vertical-align:middle;font-family:Arial,sans-serif;font-size:9px;color:#285498;letter-spacing:0px;">' +
               verticals +
             '</td>' +
           '</tr></table>' +
         '</td></tr>';
       return wrap(greet + nameRow + titleRow + line(200) + contactFull + lightLine + sameRow);
     }
-    // LB-6: large centred logo, teal full line, verticals
-    if (lbSub === 'lb6') {
-      return wrap(greet + nameRow + titleRow + line(200) + contactCompact + logoBlock(130, 'center') + tealLine + vertR);
-    }
-
-    return wrap(greet + nameRow + titleRow + line(200) + contactFull + lightLine + logoBlock(110, 'left') + vertR);
-  }
-
-
-
+    
     return '';
 }
 
