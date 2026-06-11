@@ -172,14 +172,12 @@
   <div class="form-panel">
     <div class="section-title" style="margin-bottom:10px;">Signature Style</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;">
-      <button class="var-btn" data-v="classic" onclick="setVariant(this)">Classic<span>Name · Designation · Logo inline</span></button>
       <button class="var-btn active" data-v="logo-bottom" onclick="setVariant(this)">Logo at Bottom<span>Logo closes signature</span></button>
     </div>
     <div id="lb-switcher" class="visible">
       <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:8px;">Logo at Bottom Style</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
         <button class="lb-btn active" data-lb="lb2" onclick="setLbVariant(this)">LB-2<span>No divider</span></button>
-        <button class="lb-btn" data-lb="lb4" onclick="setLbVariant(this)">LB-4<span>Logo + verticals row</span></button>
       </div>
     </div>
     <div class="section-title">Your Details</div>
@@ -191,7 +189,7 @@
     <div class="field">
       <label>Designation <span style="font-weight:400;color:#b0bac8;">&#8212; write as: Role – Dept.</span></label>
       <input id="f-title" type="text" placeholder="e.g. Executive Engineer – EPC Projects" oninput="render()" />
-      <div style="font-size:10px;color:#9aacbf;margin-top:4px;line-height:1.5;">e.g. Sr. Engineer – Energy Automation &nbsp;&middot;&nbsp; Director – Management &nbsp;&middot;&nbsp; Exec. Engineer – EPC Projects</div>
+      <div style="font-size:10px;color:#9aacbf;margin-top:4px;line-height:1.5;">e.g. Sr. Engineer – Energy Automation &nbsp;&middot;&nbsp; Exec. Engineer – EPC Projects</div>
     </div>
     <div class="field">
       <label>Email Address</label>
@@ -325,17 +323,6 @@ function buildSig() {
     cell('G1-12, IT Park, Road No. 4, IPIA,', 12, '#374151', '0 0 1px 0') +
     cell('Kota, Rajasthan &ndash; India 324005', 12, '#374151', '0 0 6px 0');
 
-  // ── CLASSIC ──
-  if (v === 'classic') {
-    var desigLogo =
-      '<tr><td style="padding:0 0 4px 0;"><table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>' +
-      '<td style="font-family:Arial,sans-serif;font-size:12px;color:#374151;padding:0;vertical-align:middle;white-space:nowrap;">' + title + '</td>' +
-      '<td style="font-family:Arial,sans-serif;font-size:12px;color:#374151;padding:0 4px;vertical-align:middle;white-space:nowrap;">|</td>' +
-      '<td style="padding:0;vertical-align:middle;line-height:1;"><img src="' + LOGO_SRC + '" width="72" height="19" alt="indexel" style="width:72px;height:19px;display:inline-block;border:0;vertical-align:middle;margin:0;padding:0;" /></td>' +
-      '</tr></table></td></tr>';
-    return wrap(greet + nameRow + desigLogo + line(desigW) + contactFull + vertR);
-  }
-
   // ── LOGO AT BOTTOM ──
   if (v === 'logo-bottom') {
 
@@ -344,22 +331,6 @@ function buildSig() {
       var spacer = '<tr><td style="height:3px;font-size:0;line-height:0;"></td></tr>';
       var vertCompact = cell(verticals, 9, '#285498', '0', 'letter-spacing:0px;');
       return wrap(greet + nameRow + titleRow + line(desigW) + contactFull + spacer + logoBlock(110, 'left') + vertCompact);
-    }
-
-    // LB-4: logo + verticals on same row
-    if (lbSub === 'lb4') {
-      var sameRow =
-        '<tr><td style="padding:8px 0 0 0;">' +
-          '<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>' +
-            '<td style="vertical-align:middle;padding:0 14px 0 0;">' +
-              '<img src="' + LOGO_SRC + '" width="90" height="' + Math.round(90*0.2593) + '" alt="indexel" style="width:90px;height:' + Math.round(90*0.2593) + 'px;display:block;border:0;" />' +
-            '</td>' +
-            '<td style="vertical-align:middle;font-family:Arial,sans-serif;font-size:9px;color:#285498;letter-spacing:0px;">' +
-              verticals +
-            '</td>' +
-          '</tr></table>' +
-        '</td></tr>';
-      return wrap(greet + nameRow + titleRow + line(desigW) + contactFull + lightLine + sameRow);
     }
 
     // default fallback to lb2
