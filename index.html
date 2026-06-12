@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Indexel Email Signature Generator</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -72,8 +71,6 @@
   }
   input:focus { border-color: var(--blue); background: #fff; }
   input::placeholder { color: #b0bac8; }
-
-  .btn-row { display: flex; gap: 10px; margin-top: 8px; }
   .lb-btn {
     padding:7px 10px; border:1.5px solid var(--border); border-radius:6px;
     background:#fff; color:var(--muted); font-family:'DM Sans',sans-serif;
@@ -84,21 +81,11 @@
   .lb-btn:hover { border-color:var(--blue); color:var(--blue); }
   .lb-btn.active { border-color:var(--blue); background:var(--blue); color:#fff; }
   .lb-btn.active span { color:#cce0ff; }
-  .copy-btn, .dl-btn {
-    flex: 1; padding: 12px 8px;
-    border: none; border-radius: 8px;
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: background 0.2s, transform 0.1s;
-  }
+  .copy-btn,
   .copy-btn { background: var(--blue); color: #fff; }
   .copy-btn:hover { background: var(--dark); }
   .copy-btn:active { transform: scale(0.98); }
   .copy-btn.success { background: #0d9e6e; }
-  .dl-btn { background: var(--bg); color: var(--blue); border: 1.5px solid var(--border); }
-  .dl-btn:hover { background: #e2eaf7; }
-  .dl-btn:active { transform: scale(0.98); }
-  .dl-btn.loading { opacity: 0.7; cursor: wait; }
-
   .instructions {
     margin-top: 16px; background: var(--bg); border-radius: 8px;
     padding: 14px 16px; font-size: 12px; color: var(--muted); line-height: 1.6;
@@ -181,10 +168,9 @@
       </div>
     </div>
 
-    <div class="btn-row">
+    
       <button class="copy-btn" id="copy-btn" onclick="copySignature()">&#128203; Copy Signature</button>
-      <button class="dl-btn" id="dl-btn" onclick="downloadPng()">&#8593; Download PNG</button>
-    </div>
+    
 
     <div class="instructions">
       <strong>How to add in Outlook</strong>
@@ -345,49 +331,6 @@ function copySignature() {
       document.body.removeChild(tmp);
       alert('Copied! Paste into Outlook or Gmail.');
     });
-}
-
-async function downloadPng() {
-  const btn = document.getElementById('dl-btn');
-  btn.textContent = '⏳ Generating...';
-  btn.classList.add('loading');
-
-  try {
-    // Build a clean white container at 2x for high quality
-    const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;background:#ffffff;padding:32px;display:inline-block;';
-    wrapper.innerHTML = buildSig();
-    document.body.appendChild(wrapper);
-
-    // Wait for images to load
-    await new Promise(r => setTimeout(r, 300));
-
-    const canvas = await html2canvas(wrapper, {
-      scale: 3,
-      backgroundColor: '#ffffff',
-      useCORS: true,
-      logging: false,
-      width: wrapper.offsetWidth,
-      height: wrapper.offsetHeight,
-    });
-
-    document.body.removeChild(wrapper);
-
-    // Download
-    const dlName = (val('f-name') || 'Sample').replace(/\s+/g,'_') || 'Signature';
-    const link = document.createElement('a');
-    link.download = `Indexel_Signature_${dlName}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-
-    btn.textContent = '✅ Downloaded!';
-    setTimeout(() => { btn.textContent = '\u2191 Download PNG'; btn.classList.remove('loading'); }, 2500);
-  } catch(e) {
-    document.body.removeChild(wrapper);
-    btn.textContent = '↑ Download PNG';
-    btn.classList.remove('loading');
-    alert('Download failed. Try copying instead.');
-  }
 }
 
 render();
